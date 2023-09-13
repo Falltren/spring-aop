@@ -31,11 +31,11 @@ public class MyAspect {
         Object result = null;
         try {
             result = joinPoint.proceed();
+            log.info("Книга с названием {} добавлена", book.getTitle());
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
             result = new CustomResponse<>(null, CustomStatus.EXCEPTION);
         }
-        log.info("Книга с названием {} добавлена", book.getTitle());
         return result;
     }
 
@@ -50,21 +50,21 @@ public class MyAspect {
             for (Object arg : arguments) {
                 if (arg instanceof String) {
                     title = (String) arg;
-                    log.info("Попытка получить книгу с названием{}", title);
+                    log.info("Попытка получить книгу с названием {}", title);
                 }
             }
         }
         Object result = null;
         try {
             result = joinPoint.proceed();
+            if (methodSignature.getName().equals("getAll")) {
+                log.info("Все книги получены");
+            } else if (methodSignature.getName().equals("getBookByTitle")) {
+                log.info("Книга с названием {} получена", title);
+            }
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
             result = new CustomResponse<>(null, CustomStatus.EXCEPTION);
-        }
-        if (methodSignature.getName().equals("getAll")) {
-            log.info("Все книги получены");
-        } else if (methodSignature.getName().equals("getBookByTitle")) {
-            log.info("Книга с названием {} получена", title);
         }
         return result;
     }
